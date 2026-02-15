@@ -28,6 +28,17 @@ function useInView(threshold = 0.15) {
   return [ref, visible] as const;
 }
 
+function useMediaQuery(query: string) {
+  const [matches, setMatches] = useState(() => window.matchMedia(query).matches);
+  useEffect(() => {
+    const mql = window.matchMedia(query);
+    const handler = (e: MediaQueryListEvent) => setMatches(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, [query]);
+  return matches;
+}
+
 function FadeIn({ children, delay = 0, direction = "up", className = "" }: { children: ReactNode; delay?: number; direction?: "up" | "down" | "left" | "right" | "none"; className?: string }) {
   const [ref, visible] = useInView(0.1);
   const transforms = { up: "translateY(40px)", down: "translateY(-40px)", left: "translateX(40px)", right: "translateX(-40px)", none: "none" };
@@ -119,6 +130,7 @@ function IconCircle({ icon, color, size = 44 }: { icon: string; color: string; s
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", fn);
@@ -126,7 +138,7 @@ function Navbar() {
   }, []);
   return (
     <nav style={{
-      position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, padding: "0 40px",
+      position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, padding: isMobile ? "0 20px" : "0 40px",
       height: 64, display: "flex", alignItems: "center", justifyContent: "space-between",
       background: scrolled ? "rgba(27,31,59,0.92)" : "transparent",
       backdropFilter: scrolled ? "blur(16px)" : "none",
@@ -137,32 +149,36 @@ function Navbar() {
         <img src={logoImg} alt="Pedidos Android" style={{ width: 32, height: 32, borderRadius: 10, objectFit: "contain" }} />
         <span style={{ color: "white", fontWeight: 700, fontSize: 18, fontFamily: "'Outfit', sans-serif" }}>Pedidos Android</span>
       </div>
-      <div style={{ display: "flex", gap: 32, alignItems: "center" }}>
-        {["Inicio", "Funciones", "Pasos", "Contacto"].map(item => (
-          <a key={item} href={`#${item.toLowerCase()}`} style={{
-            color: "rgba(255,255,255,0.65)", textDecoration: "none", fontSize: 13, fontWeight: 500,
-            transition: "color 0.3s", fontFamily: "'DM Mono', monospace", letterSpacing: 0.5,
-          }} onMouseEnter={e => (e.target as HTMLElement).style.color = COLORS.accent3}
-             onMouseLeave={e => (e.target as HTMLElement).style.color = "rgba(255,255,255,0.65)"}>{item}</a>
-        ))}
-        <button style={{
-          background: COLORS.accent3, color: COLORS.primary, border: "none", borderRadius: 24,
-          padding: "10px 22px", fontWeight: 700, fontSize: 13, cursor: "pointer",
-          fontFamily: "'Outfit', sans-serif", transition: "transform 0.2s, box-shadow 0.2s",
-        }} onMouseEnter={e => { (e.target as HTMLElement).style.transform = "translateY(-1px)"; (e.target as HTMLElement).style.boxShadow = `0 6px 24px ${COLORS.accent3}44`; }}
-           onMouseLeave={e => { (e.target as HTMLElement).style.transform = "none"; (e.target as HTMLElement).style.boxShadow = "none"; }}>
-          Descargar
-        </button>
-      </div>
+      {!isMobile && (
+        <div style={{ display: "flex", gap: 32, alignItems: "center" }}>
+          {["Inicio", "Funciones", "Pasos", "Contacto"].map(item => (
+            <a key={item} href={`#${item.toLowerCase()}`} style={{
+              color: "rgba(255,255,255,0.65)", textDecoration: "none", fontSize: 13, fontWeight: 500,
+              transition: "color 0.3s", fontFamily: "'DM Mono', monospace", letterSpacing: 0.5,
+            }} onMouseEnter={e => (e.target as HTMLElement).style.color = COLORS.accent3}
+               onMouseLeave={e => (e.target as HTMLElement).style.color = "rgba(255,255,255,0.65)"}>{item}</a>
+          ))}
+          <button style={{
+            background: COLORS.accent3, color: COLORS.primary, border: "none", borderRadius: 24,
+            padding: "10px 22px", fontWeight: 700, fontSize: 13, cursor: "pointer",
+            fontFamily: "'Outfit', sans-serif", transition: "transform 0.2s, box-shadow 0.2s",
+          }} onMouseEnter={e => { (e.target as HTMLElement).style.transform = "translateY(-1px)"; (e.target as HTMLElement).style.boxShadow = `0 6px 24px ${COLORS.accent3}44`; }}
+             onMouseLeave={e => { (e.target as HTMLElement).style.transform = "none"; (e.target as HTMLElement).style.boxShadow = "none"; }}>
+            Descargar
+          </button>
+        </div>
+      )}
     </nav>
   );
 }
 
 function HeroSection() {
+  const isMobile = useMediaQuery("(max-width: 768px)");
   return (
     <section id="inicio" style={{
       minHeight: "100vh", background: `linear-gradient(160deg, #1B1F3B 0%, #2D3368 60%, #1F2550 100%)`,
-      display: "flex", alignItems: "center", justifyContent: "center", padding: "100px 60px 60px", position: "relative", overflow: "hidden",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      padding: isMobile ? "80px 20px 40px" : "100px 60px 60px", position: "relative", overflow: "hidden",
     }}>
       <div style={{
         position: "absolute", top: "15%", right: "-5%", width: 400, height: 400, borderRadius: "50%",
@@ -174,8 +190,11 @@ function HeroSection() {
       }} />
       <DotPattern style={{ top: "20%", left: "5%", color: "white" }} />
 
-      <div style={{ maxWidth: 1100, width: "100%", display: "flex", alignItems: "center", zIndex: 2, margin: "0 auto" }}>
-      <div style={{ flex: 1, maxWidth: 560 }}>
+      <div style={{
+        maxWidth: 1100, width: "100%", display: "flex", alignItems: "center", zIndex: 2, margin: "0 auto",
+        flexDirection: isMobile ? "column" : "row",
+      }}>
+      <div style={{ flex: 1, maxWidth: isMobile ? "100%" : 560 }}>
         <FadeIn delay={0.1}>
           <div style={{
             fontFamily: "'DM Mono', monospace", fontSize: 11, color: "rgba(255,255,255,0.45)",
@@ -185,13 +204,13 @@ function HeroSection() {
         </FadeIn>
         <FadeIn delay={0.2}>
           <h1 style={{
-            fontFamily: "'Outfit', sans-serif", fontSize: 64, fontWeight: 800, color: "white",
+            fontFamily: "'Outfit', sans-serif", fontSize: isMobile ? 36 : 64, fontWeight: 800, color: "white",
             lineHeight: 1.05, margin: "0 0 20px",
           }}>Pedidos Android</h1>
         </FadeIn>
         <FadeIn delay={0.3}>
           <p style={{
-            fontFamily: "'Instrument Sans', sans-serif", fontSize: 20, color: "#A8AECE",
+            fontFamily: "'Instrument Sans', sans-serif", fontSize: isMobile ? 17 : 20, color: "#A8AECE",
             margin: "0 0 12px", fontWeight: 400,
           }}>Guía completa de funcionamiento</p>
         </FadeIn>
@@ -219,18 +238,22 @@ function HeroSection() {
         </FadeIn>
       </div>
 
-      <div style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center", position: "relative" }}>
-        <FadeIn delay={0.4} direction="left">
+      <div style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center", position: "relative", marginTop: isMobile ? 32 : 0 }}>
+        <FadeIn delay={0.4} direction={isMobile ? "up" : "left"}>
           <div style={{ position: "relative" }}>
             <PhoneMockup />
-            <FloatingCard style={{ position: "absolute", top: -20, left: -120 }} delay={0}>
-              <div style={{ color: "white", fontWeight: 700, fontSize: 14, fontFamily: "'Outfit', sans-serif" }}>1,234</div>
-              <div style={{ color: COLORS.accent3, fontSize: 10, fontFamily: "'Instrument Sans', sans-serif" }}>↑ +12% esta semana</div>
-            </FloatingCard>
-            <FloatingCard style={{ position: "absolute", bottom: 40, right: -100 }} delay={0.5}>
-              <div style={{ color: "white", fontWeight: 700, fontSize: 14, fontFamily: "'Outfit', sans-serif" }}>99.9%</div>
-              <div style={{ color: COLORS.accent3, fontSize: 10, fontFamily: "'Instrument Sans', sans-serif" }}>uptime</div>
-            </FloatingCard>
+            {!isMobile && (
+              <>
+                <FloatingCard style={{ position: "absolute", top: -20, left: -120 }} delay={0}>
+                  <div style={{ color: "white", fontWeight: 700, fontSize: 14, fontFamily: "'Outfit', sans-serif" }}>1,234</div>
+                  <div style={{ color: COLORS.accent3, fontSize: 10, fontFamily: "'Instrument Sans', sans-serif" }}>↑ +12% esta semana</div>
+                </FloatingCard>
+                <FloatingCard style={{ position: "absolute", bottom: 40, right: -100 }} delay={0.5}>
+                  <div style={{ color: "white", fontWeight: 700, fontSize: 14, fontFamily: "'Outfit', sans-serif" }}>99.9%</div>
+                  <div style={{ color: COLORS.accent3, fontSize: 10, fontFamily: "'Instrument Sans', sans-serif" }}>uptime</div>
+                </FloatingCard>
+              </>
+            )}
           </div>
         </FadeIn>
       </div>
@@ -240,13 +263,14 @@ function HeroSection() {
 }
 
 function OverviewSection() {
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const stats = [
-    { value: "20+", label: "Usuarios activos", color: COLORS.accent },
+    { value: "20+", label: "Clientes activos", color: COLORS.accent },
     { value: "4.5★", label: "Valoración media", color: COLORS.accent2 },
     { value: "50ms", label: "Tiempo de respuesta", color: COLORS.accent3 },
   ];
   return (
-    <section id="overview" style={{ background: COLORS.lightBg, padding: "100px 60px", position: "relative" }}>
+    <section id="overview" style={{ background: COLORS.lightBg, padding: isMobile ? "60px 20px" : "100px 60px", position: "relative" }}>
       <div style={{
         height: 4, background: `linear-gradient(90deg, ${COLORS.accent}, ${COLORS.accent2})`,
         position: "absolute", top: 0, left: 0, right: 0,
@@ -254,7 +278,7 @@ function OverviewSection() {
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         <FadeIn>
           <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: COLORS.accent, letterSpacing: 2, marginBottom: 8 }}>01</div>
-          <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 36, fontWeight: 800, color: COLORS.textDark, margin: "0 0 8px" }}>¿Qué es Pedidos Android?</h2>
+          <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: isMobile ? 26 : 36, fontWeight: 800, color: COLORS.textDark, margin: "0 0 8px" }}>¿Qué es Pedidos Android?</h2>
           <div style={{ width: 50, height: 2.5, background: COLORS.accent, marginBottom: 24 }} />
         </FadeIn>
         <FadeIn delay={0.1}>
@@ -262,12 +286,12 @@ function OverviewSection() {
             fontFamily: "'Instrument Sans', sans-serif", fontSize: 16, color: COLORS.textLight,
             lineHeight: 1.8, maxWidth: 600, margin: "0 0 48px",
           }}>
-            Pedidos Android es una plataforma intuitiva diseñada para simplificar tu día a día. Con una interfaz moderna y funcionalidades potentes, te permite 
+            Pedidos Android es una plataforma intuitiva diseñada para simplificar tu día a día. Con una interfaz moderna y funcionalidades potentes, te permite
             Cargar pedidos offline, consultar cuentas corrientes de clientes y consulta de precios.
           </p>
         </FadeIn>
 
-        <div style={{ display: "flex", gap: 20, marginBottom: 48 }}>
+        <div style={{ display: "flex", gap: 20, marginBottom: 48, flexDirection: isMobile ? "column" : "row" }}>
           {stats.map((s, i) => (
             <FadeIn key={s.label} delay={0.15 + i * 0.1} className="stat-card">
               <div style={{
@@ -290,6 +314,7 @@ function OverviewSection() {
 }
 
 function FeaturesSection() {
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const features = [
     { title: "Creación Pedidos", desc: "Permite generar pedidos de manera ágil mediante la selección del cliente y la incorporación de artículos, calculando automáticamente importes y total general.", color: COLORS.accent, icon: "documentText" },
     { title: "Carga de pedidos offline", desc: "Permite cargar pedidos en modo offline, garantizando que los datos se sincronicen cuando haya conexión.", color: "#E84393", icon: "database" },
@@ -297,11 +322,11 @@ function FeaturesSection() {
     { title: "Sincronizacion", desc: "Transfiere los pedidos generados al sistema central para su validación, procesamiento y registro definitivo.", color: "#3498DB", icon: "database" },
     { title: "Duplicación de Pedido", desc: "Facilita la generación de nuevos pedidos a partir de uno existente, optimizando tiempos operativos en operaciones recurrentes.", color: COLORS.accent2, icon: "duplicateDocument" },
     { title: "Actualización de Datos", desc: "Importa información actualizada desde el servidor, asegurando coherencia en clientes, productos y condiciones comerciales.", color: COLORS.warm, icon: "cloudArrowDown" },
-    { title: "Anulación de Pedido", desc: "Permite cancelar pedidos previamente registrados, evitando su procesamiento o envío al sistema central.", color: "#E74C3C", icon: "database" },    
+    { title: "Anulación de Pedido", desc: "Permite cancelar pedidos previamente registrados, evitando su procesamiento o envío al sistema central.", color: "#E74C3C", icon: "database" },
   ];
 
   return (
-    <section id="funciones" style={{ background: COLORS.lightBg, padding: "100px 60px", position: "relative" }}>
+    <section id="funciones" style={{ background: COLORS.lightBg, padding: isMobile ? "60px 20px" : "100px 60px", position: "relative" }}>
       <div style={{
         height: 4, background: `linear-gradient(90deg, ${COLORS.accent2}, ${COLORS.accent3})`,
         position: "absolute", top: 0, left: 0, right: 0,
@@ -309,15 +334,15 @@ function FeaturesSection() {
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         <FadeIn>
           <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: COLORS.accent2, letterSpacing: 2, marginBottom: 8 }}>02</div>
-          <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 36, fontWeight: 800, color: COLORS.textDark, margin: "0 0 8px" }}>Funcionalidades principales</h2>
+          <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: isMobile ? 26 : 36, fontWeight: 800, color: COLORS.textDark, margin: "0 0 8px" }}>Funcionalidades principales</h2>
           <div style={{ width: 50, height: 2.5, background: COLORS.accent2, marginBottom: 48 }} />
         </FadeIn>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 24 }}>
           {features.map((f, i) => (
             <FadeIn key={f.title} delay={0.1 + i * 0.1}>
               <div style={{
-                background: "white", borderRadius: 18, padding: "32px 28px",
+                background: "white", borderRadius: 18, padding: isMobile ? "24px 20px" : "32px 28px",
                 boxShadow: "0 2px 12px rgba(27,31,59,0.04)", transition: "transform 0.3s, box-shadow 0.3s",
                 cursor: "default", height: "100%",
               }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = `0 12px 40px ${f.color}18`; }}
@@ -338,13 +363,13 @@ function FeaturesSection() {
 
         <FadeIn delay={0.5}>
           <div style={{
-            marginTop: 32, background: COLORS.primary, borderRadius: 14, padding: "18px 28px",
-            display: "flex", alignItems: "center", justifyContent: "space-between",
+            marginTop: 32, background: COLORS.primary, borderRadius: 14, padding: isMobile ? "16px 20px" : "18px 28px",
+            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
           }}>
             <span style={{ fontFamily: "'Instrument Sans', sans-serif", fontSize: 14, color: "white" }}>
               Todas las funciones están disponibles en Android.
             </span>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill={COLORS.accent3}><path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zm-4.97-5.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48A5.84 5.84 0 0012 1c-.96 0-1.86.23-2.66.63L7.85.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31A5.983 5.983 0 006 7h12c0-2.21-1.2-4.15-2.97-5.18-.15-.09-.3-.17-.46-.25-.01-.01-.03-.01-.04-.02zM10 5H9V4h1v1zm5 0h-1V4h1v1z"/></svg>
+            <svg style={{ flexShrink: 0 }} width="24" height="24" viewBox="0 0 24 24" fill={COLORS.accent3}><path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zm-4.97-5.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48A5.84 5.84 0 0012 1c-.96 0-1.86.23-2.66.63L7.85.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31A5.983 5.983 0 006 7h12c0-2.21-1.2-4.15-2.97-5.18-.15-.09-.3-.17-.46-.25-.01-.01-.03-.01-.04-.02zM10 5H9V4h1v1zm5 0h-1V4h1v1z"/></svg>
           </div>
         </FadeIn>
       </div>
@@ -353,6 +378,7 @@ function FeaturesSection() {
 }
 
 function StepsSection() {
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const steps = [
     { title: "Descarga e instala", desc: "La instalación toma menos de 30 segundos.", color: COLORS.accent },
     { title: "Configurar", desc: "Nuestra configuracion es rapida y sencilla. Solo se debe especificar la url del servidor, el vendedor y la lista de precios a utilizar.\n Para realizar una configuracion de prueba ingresar la palabra \"demo\" en el servidor", color: COLORS.accent2 },
@@ -360,7 +386,7 @@ function StepsSection() {
   ];
 
   return (
-    <section id="pasos" style={{ background: COLORS.lightBg, padding: "100px 60px", position: "relative" }}>
+    <section id="pasos" style={{ background: COLORS.lightBg, padding: isMobile ? "60px 20px" : "100px 60px", position: "relative" }}>
       <div style={{
         height: 4, background: `linear-gradient(90deg, ${COLORS.accent3}, ${COLORS.accent})`,
         position: "absolute", top: 0, left: 0, right: 0,
@@ -368,11 +394,11 @@ function StepsSection() {
       <div style={{ maxWidth: 800, margin: "0 auto" }}>
         <FadeIn>
           <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: COLORS.accent3, letterSpacing: 2, marginBottom: 8 }}>03</div>
-          <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 36, fontWeight: 800, color: COLORS.textDark, margin: "0 0 8px" }}>¿Cómo funciona?</h2>
+          <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: isMobile ? 26 : 36, fontWeight: 800, color: COLORS.textDark, margin: "0 0 8px" }}>¿Cómo funciona?</h2>
           <div style={{ width: 50, height: 2.5, background: COLORS.accent3, marginBottom: 56 }} />
         </FadeIn>
 
-        <div style={{ position: "relative", paddingLeft: 60 }}>
+        <div style={{ position: "relative", paddingLeft: isMobile ? 48 : 60 }}>
           {/* Timeline line */}
           <div style={{
             position: "absolute", left: 22, top: 30, bottom: 30, width: 2,
@@ -421,6 +447,7 @@ function StepsSection() {
 }
 
 function CTASection() {
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const contacts = [
     { label: "EMAIL", value: "contacto.tangodev@gmail.com" },
     { label: "WhatsApp", value: "1164038746" },
@@ -430,7 +457,7 @@ function CTASection() {
     <section id="contacto" style={{
       minHeight: "100vh", background: `linear-gradient(160deg, #1B1F3B 0%, #2D3368 60%, #1F2550 100%)`,
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-      padding: "100px 60px", position: "relative", overflow: "hidden", textAlign: "center",
+      padding: isMobile ? "80px 20px 80px" : "100px 60px", position: "relative", overflow: "hidden", textAlign: "center",
     }}>
       <div style={{
         position: "absolute", top: "20%", left: "10%", width: 320, height: 320, borderRadius: "50%",
@@ -449,7 +476,7 @@ function CTASection() {
       </FadeIn>
       <FadeIn delay={0.15}>
         <h2 style={{
-          fontFamily: "'Outfit', sans-serif", fontSize: 48, fontWeight: 800, color: "white",
+          fontFamily: "'Outfit', sans-serif", fontSize: isMobile ? 30 : 48, fontWeight: 800, color: "white",
           lineHeight: 1.15, margin: "0 0 20px",
         }}>
           Transforma tu<br />productividad hoy
@@ -473,7 +500,7 @@ function CTASection() {
       </FadeIn>
 
       <FadeIn delay={0.45}>
-        <div style={{ display: "flex", gap: 16 }}>
+        <div style={{ display: "flex", gap: 16, flexDirection: isMobile ? "column" : "row" }}>
           {contacts.map(c => (
             <div key={c.label} style={{
               background: "rgba(255,255,255,0.06)", borderRadius: 14, padding: "16px 24px",
@@ -489,9 +516,10 @@ function CTASection() {
       </FadeIn>
 
       <div style={{
-        position: "absolute", bottom: 40, left: 60, right: 60,
+        position: "absolute", bottom: 40, left: isMobile ? 20 : 60, right: isMobile ? 20 : 60,
         borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 20,
-        display: "flex", justifyContent: "space-between",
+        display: "flex", justifyContent: isMobile ? "center" : "space-between",
+        flexDirection: isMobile ? "column" : "row", alignItems: "center", gap: isMobile ? 8 : 0,
       }}>
         <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#6B7194" }}>© 2026 Pedidos Android. Todos los derechos reservados.</span>
         <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#6B7194" }}>05</span>
