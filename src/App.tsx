@@ -158,15 +158,6 @@ function Navbar() {
             }} onMouseEnter={e => (e.target as HTMLElement).style.color = COLORS.accent3}
                onMouseLeave={e => (e.target as HTMLElement).style.color = "rgba(255,255,255,0.65)"}>{item}</a>
           ))}
-          <a href="/descargas/pedidosandroid.apk" download style={{
-            background: COLORS.accent3, color: COLORS.primary, border: "none", borderRadius: 24,
-            padding: "10px 22px", fontWeight: 700, fontSize: 13, cursor: "pointer",
-            fontFamily: "'Outfit', sans-serif", transition: "transform 0.2s, box-shadow 0.2s",
-            textDecoration: "none", display: "inline-block",
-          }} onMouseEnter={e => { (e.target as HTMLElement).style.transform = "translateY(-1px)"; (e.target as HTMLElement).style.boxShadow = `0 6px 24px ${COLORS.accent3}44`; }}
-             onMouseLeave={e => { (e.target as HTMLElement).style.transform = "none"; (e.target as HTMLElement).style.boxShadow = "none"; }}>
-            Descargar
-          </a>
         </div>
       )}
     </nav>
