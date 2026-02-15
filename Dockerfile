@@ -7,3 +7,4 @@ VOLUME /usr/share/nginx/html
 VOLUME /usr/share/nginx/descargas
 
 EXPOSE 80
+EXPOSE 443
