@@ -158,14 +158,15 @@ function Navbar() {
             }} onMouseEnter={e => (e.target as HTMLElement).style.color = COLORS.accent3}
                onMouseLeave={e => (e.target as HTMLElement).style.color = "rgba(255,255,255,0.65)"}>{item}</a>
           ))}
-          <button style={{
+          <a href="/descargas/pedidosandroid.apk" download style={{
             background: COLORS.accent3, color: COLORS.primary, border: "none", borderRadius: 24,
             padding: "10px 22px", fontWeight: 700, fontSize: 13, cursor: "pointer",
             fontFamily: "'Outfit', sans-serif", transition: "transform 0.2s, box-shadow 0.2s",
+            textDecoration: "none", display: "inline-block",
           }} onMouseEnter={e => { (e.target as HTMLElement).style.transform = "translateY(-1px)"; (e.target as HTMLElement).style.boxShadow = `0 6px 24px ${COLORS.accent3}44`; }}
              onMouseLeave={e => { (e.target as HTMLElement).style.transform = "none"; (e.target as HTMLElement).style.boxShadow = "none"; }}>
             Descargar
-          </button>
+          </a>
         </div>
       )}
     </nav>
@@ -488,15 +489,15 @@ function CTASection() {
         </p>
       </FadeIn>
       <FadeIn delay={0.35}>
-        <button style={{
+        <a href="/descargas/pedidosandroid.apk" download style={{
           background: `linear-gradient(135deg, ${COLORS.accent3}, #1ecfa0)`, color: COLORS.primary,
           border: "none", borderRadius: 28, padding: "16px 40px", fontWeight: 700, fontSize: 17,
           cursor: "pointer", fontFamily: "'Outfit', sans-serif", marginBottom: 12,
-          transition: "transform 0.2s, box-shadow 0.3s",
+          transition: "transform 0.2s, box-shadow 0.3s", textDecoration: "none", display: "inline-block",
         }} onMouseEnter={e => { (e.target as HTMLElement).style.transform = "translateY(-3px)"; (e.target as HTMLElement).style.boxShadow = `0 12px 40px ${COLORS.accent3}55`; }}
            onMouseLeave={e => { (e.target as HTMLElement).style.transform = "none"; (e.target as HTMLElement).style.boxShadow = "none"; }}>
           Descargar ahora
-        </button>
+        </a>
       </FadeIn>
 
       <FadeIn delay={0.45}>
