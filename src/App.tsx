@@ -53,7 +53,7 @@ function FadeIn({ children, delay = 0, direction = "up", className = "" }: { chi
 
 function DotPattern({ style }: { style?: CSSProperties }) {
   return (
-    <svg style={{ position: "absolute", opacity: 0.07, ...style }} width="120" height="120">
+    <svg style={{ position: "absolute", opacity: 0.07, pointerEvents: "none", ...style }} width="120" height="120">
       {Array.from({ length: 100 }, (_, i) => (
         <circle key={i} cx={(i % 10) * 12 + 6} cy={Math.floor(i / 10) * 12 + 6} r="1.3" fill="currentColor" />
       ))}
@@ -183,11 +183,11 @@ function HeroSection() {
     }}>
       <div style={{
         position: "absolute", top: "15%", right: "-5%", width: 400, height: 400, borderRadius: "50%",
-        background: `radial-gradient(circle, ${COLORS.accent}12, transparent 70%)`,
+        background: `radial-gradient(circle, ${COLORS.accent}12, transparent 70%)`, pointerEvents: "none",
       }} />
       <div style={{
         position: "absolute", bottom: "10%", left: "-3%", width: 280, height: 280, borderRadius: "50%",
-        background: `radial-gradient(circle, ${COLORS.accent2}10, transparent 70%)`,
+        background: `radial-gradient(circle, ${COLORS.accent2}10, transparent 70%)`, pointerEvents: "none",
       }} />
       <DotPattern style={{ top: "20%", left: "5%", color: "white" }} />
 
@@ -462,11 +462,11 @@ function CTASection() {
     }}>
       <div style={{
         position: "absolute", top: "20%", left: "10%", width: 320, height: 320, borderRadius: "50%",
-        background: `radial-gradient(circle, ${COLORS.accent}10, transparent 70%)`,
+        background: `radial-gradient(circle, ${COLORS.accent}10, transparent 70%)`, pointerEvents: "none",
       }} />
       <div style={{
         position: "absolute", bottom: "15%", right: "8%", width: 220, height: 220, borderRadius: "50%",
-        background: `radial-gradient(circle, ${COLORS.accent3}0a, transparent 70%)`,
+        background: `radial-gradient(circle, ${COLORS.accent3}0a, transparent 70%)`, pointerEvents: "none",
       }} />
       <DotPattern style={{ bottom: "8%", right: "5%", color: "white" }} />
 
