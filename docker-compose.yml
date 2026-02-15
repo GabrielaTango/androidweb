@@ -1,0 +1,9 @@
+services:
+  web:
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - ./dist:/usr/share/nginx/html:ro
+      - ./descargas:/usr/share/nginx/descargas:ro
+    restart: unless-stopped
