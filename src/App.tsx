@@ -225,7 +225,7 @@ function HeroSection() {
           </p>
         </FadeIn>
         <FadeIn delay={0.5}>
-          <div style={{ display: "flex", gap: 16 }}>
+          <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
             <a href="#overview" style={{
               background: `linear-gradient(135deg, ${COLORS.accent3}, #1ecfa0)`, color: COLORS.primary,
               border: "none", borderRadius: 28, padding: "14px 32px", fontWeight: 700, fontSize: 15,
@@ -234,6 +234,15 @@ function HeroSection() {
             }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = `0 8px 32px ${COLORS.accent3}55`; }}
                onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}>
               Comenzar ahora
+            </a>
+            <a href="/descargas/pedidosandroid.apk" download style={{
+              background: "transparent", color: COLORS.accent3,
+              border: `2px solid ${COLORS.accent3}`, borderRadius: 28, padding: "14px 32px", fontWeight: 700, fontSize: 15,
+              cursor: "pointer", fontFamily: "'Outfit', sans-serif", textDecoration: "none", display: "inline-block",
+              transition: "transform 0.2s, background 0.3s", position: "relative", zIndex: 10,
+            }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.background = "rgba(0,224,150,0.1)"; }}
+               onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.background = "transparent"; }}>
+              Descargar APK
             </a>
           </div>
         </FadeIn>
@@ -494,6 +503,7 @@ function CTASection() {
           border: "none", borderRadius: 28, padding: "16px 40px", fontWeight: 700, fontSize: 17,
           cursor: "pointer", fontFamily: "'Outfit', sans-serif", marginBottom: 12,
           transition: "transform 0.2s, box-shadow 0.3s", textDecoration: "none", display: "inline-block",
+          position: "relative", zIndex: 10,
         }} onMouseEnter={e => { (e.target as HTMLElement).style.transform = "translateY(-3px)"; (e.target as HTMLElement).style.boxShadow = `0 12px 40px ${COLORS.accent3}55`; }}
            onMouseLeave={e => { (e.target as HTMLElement).style.transform = "none"; (e.target as HTMLElement).style.boxShadow = "none"; }}>
           Descargar ahora
@@ -521,6 +531,7 @@ function CTASection() {
         borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 20,
         display: "flex", justifyContent: isMobile ? "center" : "space-between",
         flexDirection: isMobile ? "column" : "row", alignItems: "center", gap: isMobile ? 8 : 0,
+        pointerEvents: "none",
       }}>
         <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#6B7194" }}>© 2026 Pedidos Android. Todos los derechos reservados.</span>
         <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#6B7194" }}>05</span>
