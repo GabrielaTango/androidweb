@@ -324,6 +324,7 @@ function FeaturesSection() {
     { title: "Duplicación de Pedido", desc: "Facilita la generación de nuevos pedidos a partir de uno existente, optimizando tiempos operativos en operaciones recurrentes.", color: COLORS.accent2, icon: "duplicateDocument" },
     { title: "Actualización de Datos", desc: "Importa información actualizada desde el servidor, asegurando coherencia en clientes, productos y condiciones comerciales.", color: COLORS.warm, icon: "cloudArrowDown" },
     { title: "Anulación de Pedido", desc: "Permite cancelar pedidos previamente registrados, evitando su procesamiento o envío al sistema central.", color: "#E74C3C", icon: "database" },
+    { title: "Integración con sistemas ERP", desc: "Contamos con integraciones con los mas populares sistemas de gestión.", color: "#9B59B6", icon: "gear" },
   ];
 
   return (
