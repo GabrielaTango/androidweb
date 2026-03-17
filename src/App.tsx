@@ -451,8 +451,8 @@ function StepsSection() {
 function CTASection() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const contacts = [
-    { label: "EMAIL", value: "contacto.tangodev@gmail.com" },
-    { label: "WhatsApp", value: "1164038746" },
+    { label: "EMAIL", value: "" },
+    { label: "WhatsApp", value: "" },
   ];
 
   return (
